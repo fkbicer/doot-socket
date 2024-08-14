@@ -30,6 +30,19 @@ io.on("connection", socket => {
         }
     })
 
+    socket.on('list-sockets-in-room', (room) => {
+        const clientsInRoom = io.sockets.adapter.rooms.get(room);
+        if (clientsInRoom) {
+            const socketIds = Array.from(clientsInRoom);
+            console.log(`Sockets in room ${room}:`, socketIds);
+            // İstemciye geri dönmek isterseniz:
+            socket.emit('list-sockets-in-room', { room, socketIds });
+        } else {
+            console.log(`No sockets in room ${room}`);
+            socket.emit('list-sockets-in-room', { room, socketIds: [] });
+        }
+    })
+
     socket.on('disconnect', (reason) => {
         console.log(`Disconnected: ${socket.id}, Reason: ${reason}`);
     })

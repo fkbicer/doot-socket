@@ -54,7 +54,6 @@ let currentRoom = null;
     
     // Odaya katılma
     function joinRoom(room) {
-    
         currentRoom = room;
         socket.emit('join-room', room);
     
@@ -68,7 +67,22 @@ let currentRoom = null;
         if (selectedContainer) {
             selectedContainer.style.display = 'block';
         }
+    
+        // Oda bilgilerini isteme
+        socket.emit('list-sockets-in-room', room);
     }
+
+    socket.on('list-sockets-in-room', (data) => {
+        const { room, socketIds } = data;
+        console.log(`Sockets in room ${room}:`, socketIds);
+    
+        // Oda bilgilerini HTML'e eklemek isterseniz
+        const roomInfoElement = document.getElementById(`${room}Info`);
+        if (roomInfoElement) {
+            roomInfoElement.innerHTML = `Sockets in room ${room}: ${socketIds.join(', ')}`;
+        }
+    });
+    
     
     // Mesaj gönderimi
     chatContainers.addEventListener('submit', function(event) {
@@ -100,6 +114,9 @@ let currentRoom = null;
             messageList.innerHTML += `<p>${message}</p>`;
         }
     });
+    
+
+
     
     // Örnek olarak oda ekleme butonu
     document.getElementById('addRoomButton')?.addEventListener('click', () => {
