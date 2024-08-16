@@ -42,7 +42,9 @@ if (isset($input['user_id']) && isset($input['roomName'])) {
                 // Rollback transaction if user_room insertion fails
                 $db->rollback();
                 http_response_code(500);
-                echo json_encode(['message' => 'User assignment failed.']);
+                $response['success'] = false;
+                $response['message'] = 'New room creation failed';
+                echo json_encode($response);
             }
         } else {
             // Rollback transaction if room insertion fails

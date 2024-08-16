@@ -191,13 +191,11 @@ let currentRoom = null;
             messageList.innerHTML += `<p>${message}</p>`;
         }
     });
-    
 
+    //server'a username bilgisini göndermek. (db islemlerini yapmak icin, server'da yapacagız.)
+    socket.emit('send-username', username)
 
-    
-    // Örnek olarak oda ekleme butonu
-
-    try {
+    /* try {
             // 1. Oturum kontrolü
             const checkResponse = await fetch(`http://localhost/doot/backend/api/v1/check_session.php?username=${encodeURIComponent(username)}`);
             const checkData = await checkResponse.json();
@@ -235,9 +233,14 @@ let currentRoom = null;
                 // eski session_id'yi terminate edip yenisini eklemek istiyorum.
                 // 1 -session_user'a git ve mevcut checkData'nın oldugu is_active'i 0 olarak set et.
                 const pastSocketId = checkData.sessionId
-                socket.on('connected', async ({ socketId }) => {
-                console.log('Kullanıcının güncel socket_id.si : '+ socketId)
-                const currentSocketId = socketId
+                let currentSocketId = null;
+
+                // socket.on('connected') olayını dinleyin
+                socket.on('connected', ({ socketId }) => {
+                    console.log('Kullanıcının güncel socket_id.si : ' + socketId);
+                    currentSocketId = socketId;
+                });
+                
                 // 2- mevcut session_id'yi cek ve session_users'a active olarak ekle
                 try {
                     const terminateResponse = await fetch('http://localhost/doot/backend/api/v1/terminate_session.php', {
@@ -261,13 +264,13 @@ let currentRoom = null;
                 } catch (error) {
                     console.error('Session oluşturulurken hata oluştu:', error);
                 }
-            });
+          
               // 3- db'den bu kullanıcının bulundugu room'ları cek ve yeni session_id'lerin hepsini ekle
                 
             }
         } catch (error) {
             console.error('Oturum kontrolü sırasında hata oluştu:', error);
-        }
+        } */
     } else {
         window.location.href = 'register/register.html';
     }

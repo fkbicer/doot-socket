@@ -23,10 +23,14 @@ if (isset($input['username']) &&
     $userId = $db->insertData($insertQuery,array($username,$socketId,$is_active));
     if($userId) {
         http_response_code(201);
-        echo json_encode(['message' => 'Session creation succesfull.']);
+        $response['success'] = true;
+        $response['message'] = 'Session created succesfully';
+        echo json_encode($response);
     }else {
         http_response_code(500);
-        echo json_encode(['message' => 'Session creation failed.']);
+        $response['success'] = false;
+        $response['message'] = 'Session created failed';
+        echo json_encode($response);
     }
 } else {
     http_response_code(400);
