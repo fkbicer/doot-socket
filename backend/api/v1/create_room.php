@@ -10,9 +10,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
     exit;
 }
 
-if (isset($input['user_id']) && isset($input['room_name'])) {
+if (isset($input['user_id']) && isset($input['roomName'])) {
     $user_id = $input['user_id'];
-    $room_name = $input['room_name'];
+    $room_name = $input['roomName'];
     
     // Database connection
     require '../../db/database.class.php';
@@ -35,7 +35,9 @@ if (isset($input['user_id']) && isset($input['room_name'])) {
                 // Commit transaction
                 $db->commit();
                 http_response_code(200);
-                echo json_encode(['message' => 'Room addition and user assignment successful.']);
+                $response['success'] = true;
+                $response['message'] = 'New room created succesfully';
+                echo json_encode($response);
             } else {
                 // Rollback transaction if user_room insertion fails
                 $db->rollback();
