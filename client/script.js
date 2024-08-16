@@ -127,8 +127,6 @@ let currentRoom = null;
             }
         });    
 
-
-    
     // Odaya katılma
     function joinRoom(room) {
         currentRoom = room;
@@ -159,8 +157,6 @@ let currentRoom = null;
             roomInfoElement.innerHTML = `Sockets in room ${room}: ${socketIds.join(', ')}`;
         }
     });
-    
-    
     // Mesaj gönderimi
     chatContainers.addEventListener('submit', function(event) {
         event.preventDefault();
@@ -183,7 +179,6 @@ let currentRoom = null;
             messageInput.value = '';
         }
     });
-    
     // Socket.IO ile mesaj alımı
     socket.on('receive-message', ({ message, room }) => {
         const messageList = document.getElementById(`${room}Messages`);
@@ -191,86 +186,8 @@ let currentRoom = null;
             messageList.innerHTML += `<p>${message}</p>`;
         }
     });
-
     //server'a username bilgisini göndermek. (db islemlerini yapmak icin, server'da yapacagız.)
     socket.emit('send-username', username)
-
-    /* try {
-            // 1. Oturum kontrolü
-            const checkResponse = await fetch(`http://localhost/doot/backend/api/v1/check_session.php?username=${encodeURIComponent(username)}`);
-            const checkData = await checkResponse.json();
-
-            if (!checkData.active) {
-                // 2. Yeni oturum oluşturma
-                    socket.on('connected', async ({ socketId }) => {
-                        console.log('bu kullanıcıya ait active session bulunmamaktadır.')
-                        console.log('Connected with socket ID:', socketId);
-
-                    try {
-                        const createResponse = await fetch('http://localhost/doot/backend/api/v1/create_session_user.php', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify({
-                                username,
-                                socketId
-                            }),
-                        });
-
-                        const createData = await createResponse.json();
-                        if (createData.success) {
-                            console.log('Session oluşturuldu:', createData);
-                        } else {
-                            console.error('Session oluşturulurken hata oluştu:', createData.message);
-                        }
-                    } catch (error) {
-                        console.error('Session oluşturulurken hata oluştu:', error);
-                    }
-                });
-            } else {
-                console.log('Kullanicinin zaten aktif bir oturumu var:', checkData.sessionId);
-                // eski session_id'yi terminate edip yenisini eklemek istiyorum.
-                // 1 -session_user'a git ve mevcut checkData'nın oldugu is_active'i 0 olarak set et.
-                const pastSocketId = checkData.sessionId
-                let currentSocketId = null;
-
-                // socket.on('connected') olayını dinleyin
-                socket.on('connected', ({ socketId }) => {
-                    console.log('Kullanıcının güncel socket_id.si : ' + socketId);
-                    currentSocketId = socketId;
-                });
-                
-                // 2- mevcut session_id'yi cek ve session_users'a active olarak ekle
-                try {
-                    const terminateResponse = await fetch('http://localhost/doot/backend/api/v1/terminate_session.php', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            username,
-                            pastSocketId,
-                            currentSocketId
-                        }),
-                    });
-
-                    const terminateData = await terminateResponse.json();
-                    if (terminateData.success) {
-                        console.log('Session oluşturuldu:', terminateData);
-                    } else {
-                        console.error('Session oluşturulurken hata oluştu:', terminateData.message);
-                    }
-                } catch (error) {
-                    console.error('Session oluşturulurken hata oluştu:', error);
-                }
-          
-              // 3- db'den bu kullanıcının bulundugu room'ları cek ve yeni session_id'lerin hepsini ekle
-                
-            }
-        } catch (error) {
-            console.error('Oturum kontrolü sırasında hata oluştu:', error);
-        } */
     } else {
         window.location.href = 'register/register.html';
     }

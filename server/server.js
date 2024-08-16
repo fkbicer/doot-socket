@@ -51,7 +51,6 @@ io.on("connection", socket => {
                 params: { username: encodeURIComponent(username) }
             });
             const checkData = checkResponse.data;
-            console.log('response verileri : ', checkData)
             if (!checkData.active) {
                 console.log('Bu kullanıcıya ait aktif bir oturum bulunmamaktadır.');
                 console.log('Connected with socket ID:', socket.id);
