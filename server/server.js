@@ -43,8 +43,9 @@ io.on("connection", socket => {
             socket.emit('list-sockets-in-room', { room, socketIds: [] });
         }
     })
-
-    socket.on('send-username', async (username) => {
+    // 1- Mevcut session kontrolü (ona göre islemelrin yapılması)
+    // 2- room'ların cekilmesi.
+    socket.on('send-info', async (username, user_id) => {
         try {
             // Kullanıcının mevcut oturumunu kontrol et
             const checkResponse = await axios.get(`http://localhost/doot/backend/api/v1/check_session.php`, {
@@ -93,12 +94,35 @@ io.on("connection", socket => {
                 } else {
                     console.error('Session oluşturulurken hata oluştu:', terminateData.message);
                 }
-    
                 // 3- DB'den bu kullanıcının bulunduğu room'ları çek ve yeni session_id'lerin hepsini ekle
+
+                axios.get('http://localhost/doot/backend/api/v1/fetch_rooms.php', {
+                    params: {
+                        user_id: user_id
+                    }
+                })
+                .then(response => {
+                    const room_names = response.data.room_id;
+
+                    roomNames.forEach((roomName, index) => {
+                        if (index === 0) {
+                            joinedNames = roomName; // İlk oda adı
+                        } else {
+                            joinedNames += ", " + roomName; // Diğer oda adlarını ekle
+                        }
+                    });
+                    console.log('Room Names:', room_names);
+                    socket.emit('receive-room-ids', room_names);
+                })
+                .catch(error => {
+                    console.error('An error trying to obtain room_id.s', error);
+                });
             }
         } catch (error) {
             console.error('Hata oluştu:', error);
         }
+
+
     });
 
     socket.on('disconnect', (reason) => {

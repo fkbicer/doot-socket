@@ -33,6 +33,8 @@ let currentRoom = null;
 
     if (username) {
         const socket = io('http://localhost:3000');
+
+        const user_id = await getUserId(username);
     
         // Yeni bir oda eklemek için fonksiyon
         function addRoom(roomName) {
@@ -100,7 +102,6 @@ let currentRoom = null;
             
             // obtain json body data's
             const roomName = document.getElementById('roomName').value;
-            const user_id = await getUserId(username);
             console.log('User ID:', user_id);
         
             try {
@@ -187,7 +188,7 @@ let currentRoom = null;
         }
     });
     //server'a username bilgisini göndermek. (db islemlerini yapmak icin, server'da yapacagız.)
-    socket.emit('send-username', username)
+    socket.emit('send-info', username, user_id)
     } else {
         window.location.href = 'register/register.html';
     }

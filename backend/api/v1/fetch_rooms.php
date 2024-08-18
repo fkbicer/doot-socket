@@ -5,11 +5,28 @@
     header('Access-Control-Allow-Methods: *');
     header('Access-Control-Allow-Headers: Content-Type');
 
-    require '../../db/database.class.php';
-    $db = new Database();
-    $query = "SELECT room_id FROM room_users WHERE user_id = 1";
-    $result = $db->getRows($query);
+    $user_id = $_GET['user_id'] ?? null;
 
-    header('Content-Type: application/json');
-    echo json_encode($result);
+
+    if($user_id) {
+        require '../../db/database.class.php';
+        $db = new Database();
+        $query = "SELECT rooms.room_name FROM room_users JOIN rooms ON room_users.room_id = rooms.id WHERE (room_users.user_id) = (?)";
+        $result = $db->getRows($query,array($user_id));
+
+       $room_names = array_map(function($row) {
+            return $row['room_name'];
+        }, $result); 
+
+        if ($result) {
+            echo json_encode(['success' => true, 'room_id' => $room_names]);
+        } else {
+            echo json_encode(['success' => true, 'message' => 'there is no user w/ this user_id']);
+        }
+    }
+    else {
+        echo json_encode(['error' => 'user_id is required']);
+    }
+    
+    
 ?>
