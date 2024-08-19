@@ -104,12 +104,14 @@ io.on("connection", socket => {
                 .then(response => {
                     const room_names = response.data.room_id;
 
-                    roomNames.forEach((roomName, index) => {
-                        if (index === 0) {
-                            joinedNames = roomName; // İlk oda adı
-                        } else {
-                            joinedNames += ", " + roomName; // Diğer oda adlarını ekle
+                    room_names.forEach((room_name, index) => {
+                        try {
+                            socket.join(room_name);
+                            console.log('joined room again: ', room_name)
+                        } catch (error) {
+                            console.error('Error when joining room', error);
                         }
+                        
                     });
                     console.log('Room Names:', room_names);
                     socket.emit('receive-room-ids', room_names);
