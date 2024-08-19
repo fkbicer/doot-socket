@@ -151,7 +151,47 @@ let currentRoom = null;
     
         // Oda bilgilerini isteme
         socket.emit('list-sockets-in-room', room);
+
+        fetchMessages(room);
     }
+
+    async function fetchMessages(room_name) {
+        try {
+            const response = await fetch(`http://localhost/doot/backend/api/v1/fetch_messages.php?room_name=${encodeURIComponent(room_name)}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            const data = await response.json();
+            console.log('Message data: ',data.messages_data);
+            if (data.success) {
+                const messages = data.messages_data;
+                
+                // Mesajları created_at'e göre sıralama
+                // messages.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+                
+                // Mesajları HTML'e ekleme
+                const messageList = document.getElementById(`${room_name}Messages`);
+                messageList.innerHTML = ''; // Önceki mesajları temizle
+                
+                messages.forEach(msg => {
+                    const messageElement = document.createElement('div');
+                    messageElement.classList.add('message');
+                    messageElement.innerHTML = `
+                        <p>${msg.content}</p>
+                    `;
+                    messageList.appendChild(messageElement);
+                });
+            } else {
+                console.error('Error fetching messages:', data.message);
+            }
+        } catch (error) {
+            console.error('Fetch request error:', error);
+        }
+    }
+
 
     socket.on('list-sockets-in-room', (data) => {
         const { room, socketIds } = data;

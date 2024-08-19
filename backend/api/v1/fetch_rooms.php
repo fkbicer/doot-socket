@@ -21,7 +21,7 @@
         if ($result) {
             echo json_encode(['success' => true, 'room_id' => $room_names]);
         } else {
-            echo json_encode(['success' => true, 'message' => 'there is no user w/ this user_id']);
+            echo json_encode(['success' => false, 'message' => 'there is no user w/ this user_id']);
         }
     }
     else {
