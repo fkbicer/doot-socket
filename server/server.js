@@ -1,5 +1,5 @@
 import axios from 'axios'
-
+import chalk from 'chalk';
 import { Server } from 'socket.io';
 
 const io = new Server(3000, {
@@ -13,9 +13,27 @@ io.on("connection", socket => {
 
     socket.emit('connected', { socketId: socket.id });
 
-    socket.on('send-message', ({ message, room }) => {
-        console.log(`Message sent from: ${socket.id} Message: ${message} Room: ${room}`);
-    
+    socket.on('send-message', async ({username, message, room }) => {
+        console.log('Message sent from: ',chalk.green(`${socket.id}`),' Message: ', chalk.yellow(`${message}`), ' Room:', chalk.blue(`${room}`));
+
+        //create message row in db,
+
+        const createMessage = await axios.post('http://localhost/doot/backend/api/v1/create_message.php', {
+            username : username,
+            room_name: room,
+            message : message
+        }, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        const createData = createMessage.data;
+        if (createData.success) {
+            console.log('Message created successfully', createData);
+        } else {
+            console.error('Session oluşturulurken hata oluştu:', createData.message);
+        }
         // Mesajı belirli bir odaya yayınlama
         socket.to(room).emit('receive-message', { message, room });
     })

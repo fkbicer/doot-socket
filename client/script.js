@@ -76,6 +76,11 @@ let currentRoom = null;
             });
         }
 
+        socket.on('receive-room-ids', room_names => {
+            room_names.forEach(room_name => {
+                addRoom(room_name)
+            });
+        })
 
         const addRoomButton = document.getElementById('addRoomButton');
         const modal = document.getElementById('addRoomModal');
@@ -168,7 +173,7 @@ let currentRoom = null;
         
         if (message && room) {
             // Mesajı Socket.IO ile gönder
-            socket.emit('send-message', { message, room });
+            socket.emit('send-message', { username, message, room });
             
             // Mesajı ekrana yansıt
             const messageList = document.getElementById(`${room}Messages`);
