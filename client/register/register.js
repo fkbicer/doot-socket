@@ -13,10 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
             username: username,
             password: password
         };
-
-        // API endpoint
         
-
         // Form verilerini API'ye gönder
         try {
             const response = await fetch('http://localhost/doot/backend/api/v1/create_user.php', {
