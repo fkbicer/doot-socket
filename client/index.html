@@ -47,6 +47,15 @@
             margin-bottom: 10px;
         }
 
+        .message-list {
+            flex-grow: 1;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px 10px 10px 20px; /* Sol kısımdan 20px padding */
+            overflow-y: auto;
+            margin-bottom: 10px;
+        }
+
         form {
             display: flex;
             flex-direction: column;
@@ -88,6 +97,13 @@
             color: #333;
             border-radius: 5px;
         }
+        .room-header {
+        font-size: 20px;
+        font-weight: bold;
+        padding: 10px;
+        border-bottom: 2px solid #ddd;
+        margin-bottom: 10px;
+    }
 
         .room-list a:hover {
             background-color: #d0d0d0;
@@ -128,6 +144,21 @@
             color: black;
             text-decoration: none;
             cursor: pointer;
+        }
+        .logout-link {
+            display: block;
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #dc3545;
+            color: white;
+            text-align: center;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .logout-link:hover {
+            background-color: #c82333;
         }
     </style>
 </head>

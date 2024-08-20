@@ -26,15 +26,32 @@ async function getUserId(username) {
 
 
 document.addEventListener('DOMContentLoaded', async () => {
-const username = localStorage.getItem('username');
-const roomList = document.getElementById('roomList');
-const chatContainers = document.getElementById('chatContainers');
-let currentRoom = null;
+
+    const username = localStorage.getItem('username');
 
     if (username) {
-        const socket = io('http://localhost:3000');
 
+        
+        const roomList = document.getElementById('roomList');
+        const chatContainers = document.getElementById('chatContainers');
+        const logoutLink = document.getElementById('logoutLink');
+
+
+        let currentRoom = null;
+        const socket = io('http://localhost:3000');
         const user_id = await getUserId(username);
+
+        
+
+            logoutLink.addEventListener('click', () => {
+                // localStorage'ı temizle
+                localStorage.clear();
+
+                // Kullanıcıyı login sayfasına yönlendir
+                window.location.href = 'login/login.html';
+            });
+
+
     
         // Yeni bir oda eklemek için fonksiyon
         function addRoom(roomName) {
@@ -54,6 +71,9 @@ let currentRoom = null;
             chatContainer.id = `${roomName}Container`;
             chatContainer.classList.add('chat-container');
             chatContainer.innerHTML = `
+                <div class="room-header">
+                    ${roomName}
+                </div>
                 <div class="message-list" id="${roomName}Messages"></div>
                 <form id="${roomName}Form">
                     <div class="form-group">
@@ -107,9 +127,55 @@ let currentRoom = null;
             
             // obtain json body data's
             const roomName = document.getElementById('roomName').value;
-            console.log('User ID:', user_id);
+
+            // önce db'de böyle bir room var mı diye kontrol etmemiz lazım, var ise sadece join islemi,
+            // yoksa eger create islemi
+
+            const isRoomExist = await fetch(`http://localhost/doot/backend/api/v1/check_room.php?room_name=${encodeURIComponent(roomName)}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            const isRoomExistData = await isRoomExist.json();
+            console.log('is Exist log :  ',isRoomExistData);
+            if (isRoomExistData.isExist) {
+                console.log('Kullanıcı var olan odaya dahil edildi. ', isRoomExistData)
+                addRoom(roomName); // Yeni odayı ekle
+                modal.style.display = 'none'; // Modalı gizle
+            } else {
+                // yeni bir yaratma istegi yapmamiz gerekiyor.
+                try {
+                    // Odayı veritabanına ekleme isteği gönder
+                    const response = await fetch('http://localhost/doot/backend/api/v1/create_room.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ roomName, user_id })
+                    });
+            
+                    const result = await response.json();
+                    if (result.success) {
+                        console.log('Yeni oda olusturuldu ve db.ye eklendi: ', result)
+                        addRoom(roomName); // Yeni odayı ekle
+                        modal.style.display = 'none'; // Modalı gizle
+                    } else {
+                        alert('Oda eklenirken bir hata oluştu.');
+                    }
+                } catch (error) {
+                    console.error('Oda eklenirken hata oluştu:', error);
+                    alert('Bir hata oluştu. Lütfen tekrar deneyin.');
+                }
+
+            }
+
+
+
+
         
-            try {
+            /* try {
                 // Odayı veritabanına ekleme isteği gönder
                 const response = await fetch('http://localhost/doot/backend/api/v1/create_room.php', {
                     method: 'POST',
@@ -130,7 +196,7 @@ let currentRoom = null;
             } catch (error) {
                 console.error('Oda eklenirken hata oluştu:', error);
                 alert('Bir hata oluştu. Lütfen tekrar deneyin.');
-            }
+            } */
         });    
 
     // Odaya katılma
@@ -235,7 +301,7 @@ let currentRoom = null;
     //server'a username bilgisini göndermek. (db islemlerini yapmak icin, server'da yapacagız.)
     socket.emit('send-info', username, user_id)
     } else {
-        window.location.href = 'register/register.html';
+        window.location.href = 'login/login.html';
     }
 
 });
