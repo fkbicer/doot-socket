@@ -30,8 +30,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     const username = localStorage.getItem('username');
 
     if (username) {
-
-        
         const roomList = document.getElementById('roomList');
         const chatContainers = document.getElementById('chatContainers');
         const logoutLink = document.getElementById('logoutLink');
@@ -73,6 +71,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             chatContainer.innerHTML = `
                 <div class="room-header">
                     ${roomName}
+                    <button class="show-users-button" id="${roomName}ShowUsersButton">Kişiler</button>
                 </div>
                 <div class="message-list" id="${roomName}Messages"></div>
                 <form id="${roomName}Form">
@@ -84,8 +83,15 @@ document.addEventListener('DOMContentLoaded', async () => {
                         <button type="submit">Mesaj Gönder</button>
                     </div>
                 </form>
+                <div class="user-list-popup" id="${roomName}UserListPopup">
+                    <div class="popup-content">
+                        <span class="close-popup">&times;</span>
+                        <h2>Odada Bulunan Kişiler</h2>
+                        <p>Burada kişiler listelenecek.</p>
+                    </div>
+                </div>
             `;
-            
+        
             chatContainers.appendChild(chatContainer);
         
             // Oda bağlantısına tıklama işleyicisi ekleyin
@@ -93,6 +99,25 @@ document.addEventListener('DOMContentLoaded', async () => {
                 event.preventDefault(); // Linkin varsayılan davranışını engelle
                 const roomId = this.getAttribute('data-room');
                 joinRoom(roomId);
+            });
+        
+            // Kişiler butonuna tıklama işleyicisi ekleyin
+            const showUsersButton = chatContainer.querySelector(`#${roomName}ShowUsersButton`);
+            const userListPopup = chatContainer.querySelector(`#${roomName}UserListPopup`);
+            const closePopup = userListPopup.querySelector('.close-popup');
+        
+            showUsersButton.addEventListener('click', () => {
+                userListPopup.style.display = 'block';
+            });
+        
+            closePopup.addEventListener('click', () => {
+                userListPopup.style.display = 'none';
+            });
+        
+            window.addEventListener('click', (event) => {
+                if (event.target === userListPopup) {
+                    userListPopup.style.display = 'none';
+                }
             });
         }
 

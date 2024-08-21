@@ -146,6 +146,94 @@
             text-decoration: none;
             cursor: pointer;
         }
+
+        .show-users-button {
+    margin-left: 10px;
+    padding: 5px 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.show-users-button:hover {
+    background-color: #0056b3;
+}
+
+.user-list-popup {
+    display: none; /* Initially hidden */
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    border: 1px solid #ccc;
+    z-index: 1000;
+    padding: 20px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+}
+
+.popup-content {
+    position: relative;
+}
+
+.close-popup {
+    position: absolute;
+    top: 5px;
+    right: 10px;
+    cursor: pointer;
+    font-size: 18px;
+    color: #555;
+}
+
+.close-popup:hover {
+    color: #000;
+}
+
+        #userListModal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1000; /* Sit on top */
+            left: 50%;
+            top: 30%; /* Adjusted higher on the screen */
+            transform: translate(-50%, -30%); /* Center the modal */
+            width: 400px; /* Adjusted width */
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+        }
+
+        /* Close button style */
+        #userListModal .close {
+            position: absolute;
+            top: 10px; /* Position closer to the top right */
+            right: 15px; /* Position closer to the top right */
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        /* Adjust the modal size */
+        #userListModal .modal-content {
+            max-height: 80vh; /* Limit the height */
+            overflow-y: auto; /* Enable scrolling if content is too tall */
+        }
+
+        /* Additional style for better visibility */
+        #userListModal h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        #userListModal p {
+            text-align: center;
+            font-size: 18px;
+        }
+
+                
+
         .logout-link {
             display: block;
             margin-top: 20px;
