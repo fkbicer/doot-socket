@@ -54,11 +54,12 @@
             padding: 10px 10px 10px 20px; /* Sol kısımdan 20px padding */
             overflow-y: auto;
             margin-bottom: 10px;
+            max-height: calc(100vh - 200px); /* Mesaj listesinin boyutunu sınırlayarak kaydırma çubuğu ekler */
         }
 
         form {
             display: flex;
-            flex-direction: column;
+            flex-shrink: 0; /* Formun sabit kalmasını sağlar */
             padding: 10px;
             background-color: #f9f9f9;
             border-top: 1px solid #ddd;
