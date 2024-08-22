@@ -32,7 +32,7 @@ io.on("connection", socket => {
         if (createData.success) {
             console.log('Message created successfully', createData);
         } else {
-            console.error('Session oluşturulurken hata oluştu:', createData.message);
+            console.error('Message oluşturulurken hata oluştu:', createData.message);
         }
         // Mesajı belirli bir odaya yayınlama
         socket.to(room).emit('receive-message', { message, room });

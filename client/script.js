@@ -166,9 +166,23 @@ document.addEventListener('DOMContentLoaded', async () => {
             const isRoomExistData = await isRoomExist.json();
             console.log('is Exist log :  ',isRoomExistData);
             if (isRoomExistData.isExist) {
-                console.log('Kullanıcı var olan odaya dahil edildi. ', isRoomExistData)
-                addRoom(roomName); // Yeni odayı ekle
-                modal.style.display = 'none'; // Modalı gizle
+
+                const response = await fetch('http://localhost/doot/backend/api/v1/user_room.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ roomName, user_id })
+                });
+        
+                const result = await response.json();
+                if (result.success) {
+                    console.log('Kullanıcı var olan odaya dahil edildi. ', isRoomExistData)
+                    addRoom(roomName); // Yeni odayı ekle
+                    modal.style.display = 'none'; // Modalı gizle
+                } else {
+                    alert('Oda eklenirken bir hata oluştu.');
+                }
             } else {
                 // yeni bir yaratma istegi yapmamiz gerekiyor.
                 try {
@@ -195,11 +209,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }
 
             }
-
-
-
-
-        
             /* try {
                 // Odayı veritabanına ekleme isteği gönder
                 const response = await fetch('http://localhost/doot/backend/api/v1/create_room.php', {
@@ -286,14 +295,20 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     socket.on('list-sockets-in-room', (data) => {
         const { room, socketIds } = data;
-        console.log(`Sockets in room ${room}:`, socketIds);
-    
-        // Oda bilgilerini HTML'e eklemek isterseniz
-        const roomInfoElement = document.getElementById(`${room}Info`);
-        if (roomInfoElement) {
-            roomInfoElement.innerHTML = `Sockets in room ${room}: ${socketIds.join(', ')}`;
-        }
+        console.log(`Sockets in room -client- ${room}:`, socketIds);
+        
+        // İlgili popup'ı seçmek için odanın adını kullanıyoruz
+        const popupParagraph = document.querySelector(`#${room}UserListPopup .popup-content p`);
+
+        // socketIds'leri birer satır olarak paragrafa ekliyoruz
+        popupParagraph.innerHTML = ''; // Önceki içeriği temizliyoruz
+        socketIds.forEach(id => {
+            const listItem = document.createElement('p');
+            listItem.textContent = `Socket ID: ${id}`;
+            popupParagraph.appendChild(listItem);
+        });
     });
+
     // Mesaj gönderimi
     chatContainers.addEventListener('submit', function(event) {
         event.preventDefault();
@@ -323,6 +338,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             messageList.innerHTML += `<p>${message}</p>`;
         }
     });
+
     //server'a username bilgisini göndermek. (db islemlerini yapmak icin, server'da yapacagız.)
     socket.emit('send-info', username, user_id)
     } else {
