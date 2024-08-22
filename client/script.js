@@ -250,7 +250,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     
         // Oda bilgilerini isteme
-        socket.emit('list-sockets-in-room', room);
+        // socket.emit('list-sockets-in-room', room);
 
         fetchMessages(room);
     }

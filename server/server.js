@@ -44,12 +44,24 @@ io.on("connection", socket => {
         if (!rooms.includes(room)) {
             socket.join(room);
             console.log(`User ${socket.id} joined room ${room}`);
-        } else {
+            // room içerisinde bulunan socket_id'ler
+            const clientsInRoom = io.sockets.adapter.rooms.get(room);
+            if (clientsInRoom) {
+                const socketIds = Array.from(clientsInRoom);
+                io.to(room).emit('list-sockets-in-room', { room, socketIds });
+            }
+        } 
+        else {
             console.log(`User ${socket.id} is already in room ${room}`);
+            const clientsInRoom = io.sockets.adapter.rooms.get(room);
+            if (clientsInRoom) {
+                const socketIds = Array.from(clientsInRoom);
+                io.to(room).emit('list-sockets-in-room', { room, socketIds });
+            }
         }
     })
 
-    socket.on('list-sockets-in-room', (room) => {
+  /*   socket.on('list-sockets-in-room', (room) => {
         const clientsInRoom = io.sockets.adapter.rooms.get(room);
         if (clientsInRoom) {
             const socketIds = Array.from(clientsInRoom);
@@ -60,7 +72,7 @@ io.on("connection", socket => {
             console.log(`No sockets in room ${room}`);
             socket.emit('list-sockets-in-room', { room, socketIds: [] });
         }
-    })
+    }) */
     // 1- Mevcut session kontrolü (ona göre islemelrin yapılması)
     // 2- room'ların cekilmesi.
     socket.on('send-info', async (username, user_id) => {
