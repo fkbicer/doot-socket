@@ -24,6 +24,30 @@ async function getUserId(username) {
     }
 }
 
+// get room_id
+async function getRoomId(room_name) {
+    try {
+        const response = await fetch(`http://localhost/doot/backend/api/v1/get_room_id.php?room_name=${encodeURIComponent(room_name)}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            return data.id; // User ID'yi döndür
+        } else {
+            console.error('Error:', data.message);
+            return null; // Hata durumunda null döndür
+        }
+    } catch (error) {
+        console.error('Fetch request error:', error);
+        return null; // Hata durumunda null döndür
+    }
+}
+
 
 document.addEventListener('DOMContentLoaded', async () => {
 
@@ -209,28 +233,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }
 
             }
-            /* try {
-                // Odayı veritabanına ekleme isteği gönder
-                const response = await fetch('http://localhost/doot/backend/api/v1/create_room.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ roomName, user_id })
-                });
-        
-                const result = await response.json();
-                if (result.success) {
-                    console.log('Yeni oda olusturuldu ve db.ye eklendi: ', result)
-                    addRoom(roomName); // Yeni odayı ekle
-                    modal.style.display = 'none'; // Modalı gizle
-                } else {
-                    alert('Oda eklenirken bir hata oluştu.');
-                }
-            } catch (error) {
-                console.error('Oda eklenirken hata oluştu:', error);
-                alert('Bir hata oluştu. Lütfen tekrar deneyin.');
-            } */
         });    
 
     // Odaya katılma
@@ -253,6 +255,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         // socket.emit('list-sockets-in-room', room);
 
         fetchMessages(room);
+        fetchUsersInRoom(room);
     }
 
     async function fetchMessages(room_name) {
@@ -292,8 +295,43 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
+    //fetching users in room
+    async function fetchUsersInRoom(room_name) {
+        try {
 
-    socket.on('list-sockets-in-room', (data) => {
+            const room_id = await getRoomId(room_name);
+
+            const response = await fetch(`http://localhost/doot/backend/api/v1/fetch_users_in_room.php?room_id=${encodeURIComponent(room_id)}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            const data = await response.json();
+            console.log('Users data: ',data.user_names);
+            if (data.success) {
+                const users = data.user_names;
+                
+                // Mesajları HTML'e ekleme
+                const popupParagraph = document.querySelector(`#${room_name}UserListPopup .popup-content p`)
+                popupParagraph.innerHTML = ''
+
+                users.forEach(eachUser => {
+                    const listItem = document.createElement('p');
+                    listItem.textContent = `Username: ${eachUser}`;
+                    popupParagraph.appendChild(listItem);
+                })
+            } else {
+                console.error('Error fetching users in room:', data.message);
+            }
+        } catch (error) {
+            console.error('Fetch request error:', error);
+        }
+    }
+
+    
+/*     socket.on('list-sockets-in-room', (data) => {
         const { room, socketIds } = data;
         console.log(`Sockets in room -client- ${room}:`, socketIds);
         
@@ -307,7 +345,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             listItem.textContent = `Socket ID: ${id}`;
             popupParagraph.appendChild(listItem);
         });
-    });
+    }); */
 
     // Mesaj gönderimi
     chatContainers.addEventListener('submit', function(event) {
