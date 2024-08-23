@@ -53,11 +53,11 @@ io.on("connection", socket => {
         } 
         else {
             console.log(`User ${socket.id} is already in room ${room}`);
-            const clientsInRoom = io.sockets.adapter.rooms.get(room);
+           /*  const clientsInRoom = io.sockets.adapter.rooms.get(room);
             if (clientsInRoom) {
                 const socketIds = Array.from(clientsInRoom);
                 io.to(room).emit('list-sockets-in-room', { room, socketIds });
-            }
+            } */
         }
     })
 

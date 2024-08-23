@@ -331,12 +331,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     
-/*     socket.on('list-sockets-in-room', (data) => {
-        const { room, socketIds } = data;
-        console.log(`Sockets in room -client- ${room}:`, socketIds);
+     socket.on('list-sockets-in-room', (data) => {
+        const { room, socketIds } = data; 
+        // console.log(`Sockets in room -client- ${room}:`, socketIds);
+        fetchUsersInRoom(room)
         
         // İlgili popup'ı seçmek için odanın adını kullanıyoruz
-        const popupParagraph = document.querySelector(`#${room}UserListPopup .popup-content p`);
+/*         const popupParagraph = document.querySelector(`#${room}UserListPopup .popup-content p`);
 
         // socketIds'leri birer satır olarak paragrafa ekliyoruz
         popupParagraph.innerHTML = ''; // Önceki içeriği temizliyoruz
@@ -344,8 +345,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             const listItem = document.createElement('p');
             listItem.textContent = `Socket ID: ${id}`;
             popupParagraph.appendChild(listItem);
-        });
-    }); */
+        }); */
+    })
 
     // Mesaj gönderimi
     chatContainers.addEventListener('submit', function(event) {
