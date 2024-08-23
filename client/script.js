@@ -121,7 +121,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             
             addRoomForm.addEventListener('submit', async (event) => {
                 event.preventDefault();
-
                 const roomName = document.getElementById('roomName').value;
                 // önce db'de böyle bir room var mı diye kontrol etmemiz lazım, var ise sadece join islemi,
                 // yoksa eger create islemi
@@ -135,23 +134,28 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const isRoomExistData = await isRoomExist.json();
                 console.log('is Exist log :  ',isRoomExistData);
                 if (isRoomExistData.isExist) {
-
-                    const response = await fetch('http://localhost/doot/backend/api/v1/user_room.php', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({ roomName, user_id })
-                    });
-            
-                    const result = await response.json();
-                    if (result.success) {
-                        console.log('Kullanıcı var olan odaya dahil edildi. ', isRoomExistData)
-                        addRoom(roomName); // Yeni odayı ekle
-                        modal.style.display = 'none'; // Modalı gizle
-                    } else {
-                        alert('Oda eklenirken bir hata oluştu.');
+                    try {
+                        const response = await fetch('http://localhost/doot/backend/api/v1/user_room.php', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ roomName, user_id })
+                        });
+                
+                        const result = await response.json();
+                        if (result.success) {
+                            console.log('Kullanıcı var olan odaya dahil edildi. ', isRoomExistData)
+                            addRoom(roomName); // Yeni odayı ekle
+                            modal.style.display = 'none'; // Modalı gizle
+                        } else {
+                            alert('Oda eklenirken bir hata oluştu.');
+                        }
+                    } catch (error) {
+                        console.error('Oda eklenirken hata oluştu:', error);
+                        alert('Bir hata oluştu. Lütfen tekrar deneyin.');
                     }
+                    
                 } else {
                     // yeni bir yaratma istegi yapmamiz gerekiyor.
                     try {
